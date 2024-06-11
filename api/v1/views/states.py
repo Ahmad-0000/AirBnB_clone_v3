@@ -41,6 +41,7 @@ def delete_state(state_id):
         abort(404)
     storage.delete(state)
     storage.save()
+    storage.close()
     return jsonify({})
 
 
@@ -54,6 +55,7 @@ def add_state():
         if "name" in request_data:
             new_state = State(**request_data)
             new_state.save()
+            storage.close()
             return make_response(jsonify(new_state.to_dict()), 201)
         else:
             abort(400, "Missing name")
@@ -79,4 +81,5 @@ def update_state_info(state_id):
             continue
         state.__dict__[key] = value
     state.save()
+    storage.close()
     return make_response(jsonify(state.to_dict()), 200)
