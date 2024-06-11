@@ -160,6 +160,8 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("** class doesn't exist **")
 
+    do_new = do_create
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

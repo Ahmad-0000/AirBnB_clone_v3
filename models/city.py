@@ -19,6 +19,19 @@ class City(BaseModel, Base):
         state_id = ""
         name = ""
 
+        @property
+        def places(self):
+            """Get all places accounts linked to this city"""
+            from models import storage
+            from models.place import Place
+
+            all_places = storage.all(Place)
+            city_places = []
+            for place in all_places.values():
+                if place.city_id == self.id:
+                    city_places.append(place)
+            return city_places
+
     def __init__(self, *args, **kwargs):
         """initializes city"""
         super().__init__(*args, **kwargs)
