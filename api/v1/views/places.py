@@ -52,6 +52,7 @@ def add_place_account(city_id):
     from models import storage
     from models.place import Place
     from models.city import City
+    from models.user import User
 
     city = storage.get(City, str(city_id))
     if not city:
@@ -61,6 +62,9 @@ def add_place_account(city_id):
     request_data = request.get_json()
     if "user_id" not in request_data:
         abort(400, "Missing user_id")
+    user = storage.get(User, request_data["user_id"])
+    if not user:
+        abort(404)
     if "name" not in request_data:
         abort(400, "Missing name")
     new_place_account = Place(**request_data)
