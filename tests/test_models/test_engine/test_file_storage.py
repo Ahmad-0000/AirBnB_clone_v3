@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Contains the TestFileStorageDocs classes
+Testing FileStorage class
 """
 
 from datetime import datetime
@@ -113,3 +113,36 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "Storage type is db")
+    def test_count(self):
+        """Test that "count" returns the true objects number"""
+        file_path = FileStorage.__dict__['_FileStorage__file_path']
+        new_instance = State()
+        new_instance.save()
+        new_instance = City()
+        new_instance.save()
+        with open(file_path, "r") as json_file:
+            objects = json.load(json_file)
+            real_number = len(objects)
+            storage = FileStorage()
+            method_number = storage.count()
+        self.assertEqual(real_number, method_number)
+        with open(file_path, "r") as json_file:
+            objects = json.load(json_file)
+            real_state_objects = 0
+            for key in objects:
+                if key.split(".")[0] == "State":
+                    real_state_objects += 1
+            storage = FileStorage()
+            method_state_objects = storage.count(State)
+        self.assertEqual(real_state_objects, method_state_objects)
+
+    @unittest.skipIf(models.storage_t == 'db', "Storage type is db")
+    def test_get(self):
+        """Test that get method returns the desired object"""
+        real_instance = State()
+        real_instance.save()
+        storage = FileStorage()
+        get_instance = storage.get(State, real_instance.id)
+        self.assertEqual(real_instance.to_dict(), get_instance.to_dict())
