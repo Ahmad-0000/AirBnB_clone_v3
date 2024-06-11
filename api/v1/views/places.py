@@ -42,7 +42,6 @@ def delete_place_account(place_id):
         abort(404)
     storage.delete(place)
     storage.save()
-    storage.close()
     return jsonify({})
 
 
@@ -70,7 +69,6 @@ def add_place_account(city_id):
         abort(400, "Missing name")
     new_place_account = Place(**request_data)
     new_place_account.save()
-    storage.close()
     return make_response(jsonify(new_place_account.to_dict()), 201)
 
 
@@ -93,5 +91,4 @@ def update_place_account(place_id):
             continue
         place.__dict__[k] = v
     place.save()
-    storage.close()
     return jsonify(place.to_dict())
