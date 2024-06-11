@@ -16,6 +16,7 @@ def all_states():
         states_list.append(state.to_dict())
     return jsonify(states_list)
 
+
 @app_views.route("/states/<uuid:state_id>", strict_slashes=False)
 def one_state(state_id):
     """Reterive one state from storage"""
@@ -27,7 +28,9 @@ def one_state(state_id):
         return jsonify(one_state.to_dict())
     abort(404)
 
-@app_views.route("/states/<uuid:state_id>", strict_slashes=False, methods=['DELETE'])
+
+@app_views.route("/states/<uuid:state_id>",
+                 strict_slashes=False, methods=['DELETE'])
 def delete_state(state_id):
     """Delete state from the storage"""
     from models import storage
@@ -39,6 +42,7 @@ def delete_state(state_id):
     storage.delete(state)
     storage.save()
     return jsonify({})
+
 
 @app_views.route("/states", strict_slashes=False, methods=['POST'])
 def add_state():
@@ -56,7 +60,9 @@ def add_state():
     else:
         abort(400, "Not a JSON")
 
-@app_views.route("/states/<uuid:state_id>", strict_slashes=False, methods=['PUT'])
+
+@app_views.route("/states/<uuid:state_id>", strict_slashes=False,
+                 methods=['PUT'])
 def update_state_info(state_id):
     """Updating state info"""
     from models import storage
