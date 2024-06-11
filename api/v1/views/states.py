@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """States blueprint"""
 from flask import jsonify, abort, request, make_response
 from api.v1.views import app_views
@@ -44,6 +45,6 @@ def delete_state(state_id):
 #    """Add new state in the storage"""
 #    from models import storage
 #    from models.state import State
-#
+
 #    if not requsest.json:
 #        make_response()
