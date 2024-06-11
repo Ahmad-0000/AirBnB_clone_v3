@@ -21,6 +21,11 @@ def not_found(error):
     not_found = {"error": "Not found"}
     return make_response(jsonify(not_found), 404)
 
+@app.errorhandler(400)
+def bad_request(error):
+    """Custom bad request error"""
+    bad_request = {"message": error.description}
+    return make_response(jsonify(bad_request), 400)
 
 if __name__ == "__main__":
     host = getenv("HBNB_API_HOST")
