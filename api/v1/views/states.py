@@ -40,11 +40,37 @@ def delete_state(state_id):
     storage.save()
     return jsonify({})
 
-#@app_views.route("/states", strict_slashes=False, methods=['POST'])
-#def add_state():
-#    """Add new state in the storage"""
-#    from models import storage
-#    from models.state import State
+@app_views.route("/states", strict_slashes=False, methods=['POST'])
+def add_state():
+    """Add new state in the storage"""
+    from models.state import State
 
-#    if not requsest.json:
-#        make_response(jsonify())
+    if request.is_json:
+        request_data = request.get_json()
+        if "name" in request_data:
+            new_state = State(**request_data)
+            new_state.save()
+            return make_response(jsonify(new_state.to_dict()), 201)
+        else:
+            abort(400, "Missing name")
+    else:
+        abort(400, "Not a JSON")
+
+@app_views.route("/states/<uuid:state_id>", strict_slashes=False, methods=['PUT'])
+def update_state_info(state_id):
+    """Updating state info"""
+    from models import storage
+    from models.state import State
+
+    if not request.is_json:
+        abort(400, "Not a JSON")
+    state = storage.get(State, str(state_id))
+    if not state:
+        abort(404)
+    update_data = request.get_json()
+    for key, value in update_data.items():
+        if key == "id" or key == "created_at" or key == "updated_at":
+            continue
+        state.__dict__[key] = value
+    state.save()
+    return make_response(jsonify(state.to_dict()), 200)
