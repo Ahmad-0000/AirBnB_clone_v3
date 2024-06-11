@@ -73,6 +73,9 @@ class Place(BaseModel, Base):
             amenity_list = []
             all_amenities = models.storage.all(Amenity)
             for amenity in all_amenities.values():
-                if amenity.place_id == self.id:
-                    amenity_list.append(amenity)
+                try:
+                    if amenity.place_id == self.id:
+                        amenity_list.append(amenity)
+                except AttributeError:
+                    pass
             return amenity_list
