@@ -149,6 +149,8 @@ EOF  all  create  destroy  help  quit  show  update
 ** no instance found **
 (hbnb) quit
 ```
+> [!Note]
+> Use **new** console utility with classes **User**, **State** and **City**
 
 ## Bugs
 No known bugs at this time. 
