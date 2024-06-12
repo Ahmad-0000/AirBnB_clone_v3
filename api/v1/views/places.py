@@ -92,3 +92,54 @@ def update_place_account(place_id):
         place.__dict__[k] = v
     place.save()
     return jsonify(place.to_dict())
+
+
+@app_views.route("/places_search", strict_slashes=False, methods=['POST'])
+def super_search():
+    """To be updated"""
+    from models import storage
+    from models.place import Place
+    from models.state import State
+    from models.city import City
+    from models.amenity import Amenity
+
+    filtered_places = []
+    cities_list = []
+    states_list = []
+    amenities_list = []
+    if not request.is_json:
+        abort(400, "Not a JSON")
+    if not request.get_json():
+        return jsonify([place.to_dict() for place in storage.all(Place)])
+    json_states = request.get_json().get("states", None)
+    json_cities = request.get_json().get("cities", None)
+    json_amenities = request.get_json().get("amenities", None)
+    if not json_states and not json_cities and not json_amenities:
+        return jsonify([place.to_dict() for place in storage.all(Place)])
+    if json_cities:
+        for city_id in json_cities:
+            city = storage.get(City, city_id)
+            if city:
+                cities_list.append(city)
+    if json_states:
+        for state_id in json_states:
+            state = storage.get(State, state_id)
+            if state:
+                states_list.append(state)
+    if json_amenities:
+        for amenity_id in json_amenities:
+            amenity = storage.get(Amenity, amenity_id)
+            if amenity:
+                amenities_list.append(amenity)
+    for city in cities_list:
+        filtered_places += city.places
+    for state in states_list:
+        cities = state.cities
+        for city in cities:
+            if city.id not in json_cities:
+                filtered_places += city.places
+    for amenity in amenities_list:
+        for place in filtered_places:
+            if amenity.id not in [a.id for a in place.amenities]:
+                filtered_places.remove(place)
+    return jsonify([place.to_dict() for place in filtered_places])
